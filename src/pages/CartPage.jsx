@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -17,10 +18,16 @@ const CartPage = () => {
   const total = useSelector(selectCartTotal);
   const currency = items[0]?.currency || 'USD';
 
-  const subtotal = total;
-  const shipping = subtotal > 0 ? (subtotal >= 50 ? 0 : 5.99) : 0;
-  const tax = subtotal * 0.08;
-  const orderTotal = subtotal + shipping + tax;
+  // useMemo: Recomputes subtotal/shipping/tax/orderTotal only when `total` changes.
+  // Without it, these calculations run on every render (e.g. when hovering buttons).
+  // Memoization avoids redundant work and keeps child components from re-rendering
+  // unnecessarily if they receive these values as props.
+  const { subtotal, shipping, tax, orderTotal } = useMemo(() => {
+    const subtotal = total;
+    const shipping = subtotal > 0 ? (subtotal >= 50 ? 0 : 5.99) : 0;
+    const tax = subtotal * 0.08;
+    return { subtotal, shipping, tax, orderTotal: subtotal + shipping + tax };
+  }, [total]);
 
   if (items.length === 0) {
     return (

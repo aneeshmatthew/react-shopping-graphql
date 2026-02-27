@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useSearchParams } from 'react-router-dom';
 import { SEARCH_PRODUCTS } from '../graphql/queries';
@@ -40,24 +40,28 @@ const HomePage = () => {
   const totalItems = data?.search?.totalItems || 0;
   const totalPages = Math.ceil(totalItems / PAGE_SIZE);
 
-  const handleCollectionSelect = (slug) => {
+  // useCallback: Stable function references so CategoryFilter, SearchBar, and the
+  // sort <select> don't re-render when parent state changes (e.g. page, sortBy).
+  // New function refs each render would cause those children to re-render even
+  // when their own props haven't meaningfully changed.
+  const handleCollectionSelect = useCallback((slug) => {
     setSelectedCollection(slug);
     setPage(0);
-  };
+  }, []);
 
-  const handleSearch = (query) => {
+  const handleSearch = useCallback((query) => {
     setPage(0);
     if (query.trim()) {
       setSearchParams({ search: query.trim() });
     } else {
       setSearchParams({});
     }
-  };
+  }, [setSearchParams]);
 
-  const handleSortChange = (e) => {
+  const handleSortChange = useCallback((e) => {
     setSortBy(JSON.parse(e.target.value));
     setPage(0);
-  };
+  }, []);
 
   return (
     <main className="home-page">

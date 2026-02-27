@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/cartSlice';
@@ -9,7 +10,10 @@ const formatPrice = (cents, currency) => {
   }).format(cents / 100);
 };
 
-const ProductCard = ({ product }) => {
+// memo: Prevents re-render when parent (HomePage) re-renders but this product's
+// props haven't changed. HomePage has 12 cards; without memo, changing sort/filter
+// would re-render all 12. With memo, only cards whose `product` changed re-render.
+const ProductCard = memo(({ product }) => {
   const dispatch = useDispatch();
   const { productId, productName, slug, productAsset, priceWithTax, currencyCode } = product;
 
@@ -17,7 +21,11 @@ const ProductCard = ({ product }) => {
   const maxPrice = priceWithTax?.max ?? null;
   const currency = currencyCode || 'USD';
 
-  const handleQuickAdd = (e) => {
+  // useCallback: Keeps a stable function reference across renders. Required for
+  // memo to work — if handleQuickAdd were recreated every render, passing it to
+  // the button would break memo's shallow prop comparison (props would always
+  // look "different").
+  const handleQuickAdd = useCallback((e) => {
     e.preventDefault();
     dispatch(
       addToCart({
@@ -30,7 +38,7 @@ const ProductCard = ({ product }) => {
         variant: 'Default',
       })
     );
-  };
+  }, [dispatch, productId, productName, minPrice, currency, productAsset?.preview]);
 
   return (
     <Link to={`/product/${slug}`} className="product-card">
@@ -79,6 +87,9 @@ const ProductCard = ({ product }) => {
       </div>
     </Link>
   );
-};
+});
+
+// displayName helps React DevTools show "ProductCard" instead of "Memo" in the tree.
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;
