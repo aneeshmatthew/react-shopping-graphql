@@ -1,12 +1,11 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-
-const cartLink = (page) => page.locator('a.navbar__link[href*="cart"]');
+import { cartLink, waitForProductGrid } from './helpers.js';
 
 test.describe('Product detail page', () => {
   test('navigates from product card to detail', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.product-grid')).toBeVisible({ timeout: 10000 });
+    await waitForProductGrid(page);
     const firstCard = page.locator('.product-card').first();
     const productName = await firstCard.locator('.product-card__name').textContent();
     await firstCard.click();
@@ -16,7 +15,7 @@ test.describe('Product detail page', () => {
 
   test('shows product info and add to cart button', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.product-grid')).toBeVisible({ timeout: 10000 });
+    await waitForProductGrid(page);
     await page.locator('.product-card').first().click();
     await expect(page.locator('.product-detail__name')).toBeVisible();
     await expect(page.locator('.product-detail__price')).toBeVisible();
@@ -25,7 +24,7 @@ test.describe('Product detail page', () => {
 
   test('add to cart from detail page', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.product-grid')).toBeVisible({ timeout: 10000 });
+    await waitForProductGrid(page);
     const productName = await page.locator('.product-card').first().locator('.product-card__name').textContent();
     await page.locator('.product-card').first().click();
     await page.getByRole('button', { name: 'Add to Cart' }).click();
@@ -36,7 +35,7 @@ test.describe('Product detail page', () => {
 
   test('breadcrumb links work', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.product-grid')).toBeVisible({ timeout: 10000 });
+    await waitForProductGrid(page);
     await page.locator('.product-card').first().click();
     await page.getByRole('link', { name: 'Products' }).first().click();
     await expect(page).toHaveURL(/\/react-shopping-graphql\/?$/);

@@ -1,0 +1,33 @@
+# Optional E2E workflow — run manually or after deploy.
+# Does NOT block CI or deployment. Use for smoke testing the live site.
+name: E2E — Smoke Tests
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['CD — Deploy to GitHub Pages']
+    types: [completed]
+    branches: [main]
+
+jobs:
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: PLAYWRIGHT_USE_SYSTEM_CHROME=0 npx playwright test

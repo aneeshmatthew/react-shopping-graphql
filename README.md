@@ -48,11 +48,11 @@ npm run build
 
 ### E2E Tests (Playwright)
 
-Tests run against the deployed site: [https://aneeshmatthew.github.io/react-shopping-graphql/](https://aneeshmatthew.github.io/react-shopping-graphql/)
-
 ```bash
 npx playwright install chromium   # one-time: install browser
-npm run test:e2e                   # run all tests
+npm run dev                        # start dev server (in one terminal)
+npm run test:e2e                   # run tests against localhost
+npm run test:e2e:prod              # run tests against production
 npm run test:e2e:ui                # run with interactive UI
 ```
 
