@@ -1,14 +1,16 @@
-name: CD — Deploy to Vercel
+name: CD — Deploy to GitHub Pages
 
-# Only deploys when CI passes on the main branch
-# (this workflow runs AFTER ci.yml passes)
 on:
   push:
     branches: [main]
 
+# Required for GitHub Pages deployment
+permissions:
+  contents: write
+
 jobs:
   deploy:
-    name: Deploy
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -27,22 +29,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      # ─── Vercel Deploy ────────────────────────────────────────────────────
-      # To activate this step:
-      # 1. Go to https://vercel.com → create a project → link your GitHub repo
-      # 2. Get your tokens: vercel.com/account/tokens
-      # 3. Add these 3 secrets in GitHub → Settings → Secrets → Actions:
-      #      VERCEL_TOKEN      → your personal Vercel token
-      #      VERCEL_ORG_ID     → found in your Vercel project settings
-      #      VERCEL_PROJECT_ID → found in your Vercel project settings
-      # 4. Remove the 'if: false' line below to enable deployment
-
-      - name: Deploy to Vercel
-        if: false  # ← remove this line once you have added the secrets above
-        uses: amondnet/vercel-action@v25
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-          working-directory: ./
+          github_token: ${{ secrets.GITHUB_TOKEN }}   # auto-provided, no setup needed
+          publish_dir: ./dist                          # the folder Vite builds into
