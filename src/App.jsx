@@ -1,13 +1,16 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client/react';
 import { Provider } from 'react-redux';
 import client from './apollo/client';
 import store from './store/cartStore';
 import Navbar from './components/Navbar';
-import HomePage from './pages/HomePage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import CartPage from './pages/CartPage';
+import LoadingSpinner from './components/LoadingSpinner';
 import './main.css';
+
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
 
 const App = () => {
   return (
@@ -16,11 +19,13 @@ const App = () => {
         <BrowserRouter>
           <div className="app">
             <Navbar />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/product/:slug" element={<ProductDetailPage />} />
-              <Route path="/cart" element={<CartPage />} />
-            </Routes>
+            <Suspense fallback={<LoadingSpinner fullPage />}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/product/:slug" element={<ProductDetailPage />} />
+                <Route path="/cart" element={<CartPage />} />
+              </Routes>
+            </Suspense>
             <footer className="footer">
               <div className="container footer__inner">
                 <p>© {new Date().getFullYear()} ShopGraphQL — Built with React, GraphQL &amp; Redux</p>
