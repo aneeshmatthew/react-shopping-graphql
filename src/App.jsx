@@ -2,12 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client/react';
 import { Provider } from 'react-redux';
 import client from './apollo/client';
-import store from './store';
+import store from './store/cartStore';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
-import './index.css';
+import './main.css';
 
 const App = () => {
   return (
