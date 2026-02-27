@@ -1,0 +1,48 @@
+name: CI — Lint & Build
+
+# Triggers: runs on every push and on every pull request targeting main
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Lint and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1 — check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2 — set up Node.js (matches the minimum required version)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'          # caches node_modules between runs for speed
+
+      # Step 3 — install all dependencies
+      - name: Install dependencies
+        run: npm ci               # ci is stricter than install — uses package-lock.json exactly
+
+      # Step 4 — run the linter
+      # if there are any lint errors the pipeline stops here
+      - name: Lint
+        run: npm run lint
+
+      # Step 5 — build the app
+      # if the build fails (syntax error, bad import, etc.) pipeline stops here
+      - name: Build
+        run: npm run build
+
+      # Step 6 — upload the built files as a downloadable artifact
+      # useful for inspecting what was built or passing to a deploy job
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7     # keep the artifact for 7 days
