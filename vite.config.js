@@ -40,7 +40,7 @@ import compression from 'vite-plugin-compression';
  * Use this to identify which libraries are bloating the bundle
  * before deciding what to optimize or replace.
  */
-const isAnalyze = process.env.ANALYZE === 'true';
+const isAnalyze = typeof process !== 'undefined' && process.env?.ANALYZE === 'true';
 
 export default defineConfig({
   /**
