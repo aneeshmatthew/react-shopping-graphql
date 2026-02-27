@@ -19,7 +19,7 @@ const App = () => {
   return (
     <ApolloProvider client={client}>
       <Provider store={store}>
-        <BrowserRouter>
+        <BrowserRouter basename="/react-shopping-graphql">
           <div className="app">
             <Navbar />
             {/* Suspense required for lazy-loaded components. While a page chunk is

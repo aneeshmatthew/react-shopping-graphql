@@ -46,6 +46,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 npm run build
 ```
 
+### E2E Tests (Playwright)
+
+Tests run against the deployed site: [https://aneeshmatthew.github.io/react-shopping-graphql/](https://aneeshmatthew.github.io/react-shopping-graphql/)
+
+```bash
+npx playwright install chromium   # one-time: install browser
+npm run test:e2e                   # run all tests
+npm run test:e2e:ui                # run with interactive UI
+```
+
 ## Project Structure
 
 ```

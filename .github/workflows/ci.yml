@@ -46,3 +46,10 @@ jobs:
           name: dist
           path: dist/
           retention-days: 7     # keep the artifact for 7 days
+
+      # Step 7 — run E2E tests against the deployed live site
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: npm run test:e2e
